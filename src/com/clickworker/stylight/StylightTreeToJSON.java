@@ -25,7 +25,7 @@ public class StylightTreeToJSON {
 	 */
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		Workbook wb = new XSSFWorkbook("D:/Download/Master Kategoriebaum.xlsx");
+		Workbook wb = new XSSFWorkbook("/users/mdittmann/kategoriebaum.xlsx");
 		Sheet sheet = wb.getSheetAt(1);
 		StylightTreeToJSON schoberToJSON = new StylightTreeToJSON();
 		//Sheet transformedSheet = schoberToJSON.reformatSheet(sheet);
