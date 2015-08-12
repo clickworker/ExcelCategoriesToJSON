@@ -90,8 +90,8 @@ public class ReweTreeToJSON {
 					level = (short) (parentLevel + 1);
 				}
 				
-				String name = df.formatCellValue(row.getCell(COLUMN_INDEX_NAME_UK));
-				String desc = df.formatCellValue(row.getCell(COLUMN_INDEX_EXPL_UK));
+				String name = df.formatCellValue(row.getCell(COLUMN_INDEX_NAME_DE));
+				String desc = df.formatCellValue(row.getCell(COLUMN_INDEX_EXPL_DE));
 				//String image = df.formatCellValue(row.getCell(COLUMN_INDEX_IMAGE));
 				
 				StylightNode node = new StylightNode();
