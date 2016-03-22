@@ -3,6 +3,7 @@
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,34 +26,34 @@ public class StylightTreeToJSON {
 	 */
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		Workbook wb = new XSSFWorkbook("/users/mdittmann/kategoriebaum.xlsx");
-		Sheet sheet = wb.getSheetAt(1);
+		Workbook wb = new XSSFWorkbook("/Users/nlattek/Desktop/category-tree-clickworker-1.xlsx");
+		Sheet sheet = wb.getSheetAt(0);
 		StylightTreeToJSON schoberToJSON = new StylightTreeToJSON();
 		//Sheet transformedSheet = schoberToJSON.reformatSheet(sheet);
-		schoberToJSON.excelToModelFromMaster(sheet);		
+		schoberToJSON.excelToModelFromMaster(sheet);
 	}
-	
+
 	private Sheet reformatSheet(Sheet sheet) throws FileNotFoundException, IOException{
 		Workbook targetWB = new XSSFWorkbook();
 		Sheet newSheet = targetWB.createSheet();
 		DataFormatter df = new DataFormatter();
 		Set<String> uniqueGraphs = new HashSet<String>();
 		int rowIndex = 1;
-		
+
 		for(Row row : sheet){
 			if(row.getRowNum() > 0){
-				
+
 				String graph = df.formatCellValue(row.getCell(0));
 				String id = df.formatCellValue(row.getCell(2));
 				String graphArray [] = graph.split("->");
-				
+
 				for(int level = 0; level < graphArray.length; ++level){
 					String graphNode = graphArray[level];
 					if(uniqueGraphs.add(graphNode)){
 						Row newRow = newSheet.createRow(rowIndex);
 						Cell cell = newRow.createCell(0);
 						Cell idCell = newRow.createCell(2);
-						
+
 						switch(level){
 						case 0:
 							idCell.setCellValue("1000" + id);
@@ -70,34 +71,34 @@ public class StylightTreeToJSON {
 							System.out.println("Error with Level from Path!");
 							break;
 						}
-						
+
 						rowIndex++;
 					}
 				}
-				
-				
+
+
 			}
-			
+
 		}
 		//targetWB.write(new FileOutputStream("trans_out.xlsx"));
-		
+
 		return newSheet;
 	}
-	
+
 	private void excelToModel(Sheet sheet){
 		DataFormatter df = new DataFormatter();
 		ArrayList<StylightNode> nodes_1 = new ArrayList<StylightNode>();
 		ArrayList<StylightNode> nodes_2 = new ArrayList<StylightNode>();
 		ArrayList<StylightNode> nodes_3 = new ArrayList<StylightNode>();
 		ArrayList<StylightNode> nodes_4 = new ArrayList<StylightNode>();
-		
+
 		for(Row row : sheet){
 			if(row.getRowNum() > 0){
 				String graph = df.formatCellValue(row.getCell(0));
 				String graphArray [] = graph.split("->");
-				
-				
-				
+
+
+
 					String name = graphArray[graphArray.length - 1];
 					short level = (short)graphArray.length;
 					String desc = df.formatCellValue(row.getCell(3));
@@ -108,14 +109,14 @@ public class StylightTreeToJSON {
 					if(id.equals("10221")){
 						System.out.println("Found");
 					}
-					
+
 					StylightNode node = new StylightNode();
 					node.setName(name);
 					node.setLevel(level);
 					node.setDescription(desc.length() > 1 ? desc : "");
 					node.setId(Integer.parseInt(id));
 					node.setImage(image);
-					
+
 					switch(node.getLevel()){
 					case 1:
 						nodes_1.add(node);
@@ -138,13 +139,13 @@ public class StylightTreeToJSON {
 					default:
 						break;
 					}
-				
-				
+
+
 			}
 		}
 		int count = nodes_1.size() + nodes_2.size() + nodes_3.size() + nodes_4.size();
 		System.out.println("Have " + count + " categories.");
-//				
+//
 //				switch(node.getLevel()){
 //				case 0:
 //					parentNodes = null;
@@ -191,14 +192,14 @@ public class StylightTreeToJSON {
 				parentFound = true;
 				break;
 			}
-			
+
 		}
 		if(!parentFound){
 			System.out.println("Parent Item with Name: " + parentName + " not found!");
 		}
-		
+
 	}
-	
+
 	private void setParentbyID(ArrayList<StylightNode> nodes, int parentId,
 			StylightNode node) {
 		boolean parentFound = false;
@@ -209,21 +210,21 @@ public class StylightTreeToJSON {
 				parentFound = true;
 				break;
 			}
-			
+
 		}
 		if(!parentFound){
 			System.out.println("Parent Item with Id: " + parentId + " not found!");
 		}
-		
+
 	}
-	
+
 	private void excelToModelFromMaster(Sheet sheet){
 		DataFormatter df = new DataFormatter();
 		ArrayList<StylightNode> nodes_1 = new ArrayList<StylightNode>();
 		ArrayList<StylightNode> nodes_2 = new ArrayList<StylightNode>();
 		ArrayList<StylightNode> nodes_3 = new ArrayList<StylightNode>();
 		ArrayList<StylightNode> nodes_4 = new ArrayList<StylightNode>();
-		
+
 		short COLUMN_INDEX_TAG_ID = 0;
 		short COLUMN_INDEX_LEVEL = 1;
 		short COLUMN_INDEX_PARENT = 2;
@@ -232,25 +233,30 @@ public class StylightTreeToJSON {
 		short COLUMN_INDEX_NAME_UK = 6;
 		short COLUMN_INDEX_EXPL_UK = 7;
 		short COLUMN_INDEX_IMAGE = 8;
-		
-		
+
+
 		for(Row row : sheet){
 			if(row.getRowNum() > 0){
-				
+
 				String id = df.formatCellValue(row.getCell(COLUMN_INDEX_TAG_ID));
 				String level = df.formatCellValue(row.getCell(COLUMN_INDEX_LEVEL));
 				String parentId = df.formatCellValue(row.getCell(COLUMN_INDEX_PARENT));
-				String name = df.formatCellValue(row.getCell(COLUMN_INDEX_NAME_UK));
-				String desc = df.formatCellValue(row.getCell(COLUMN_INDEX_EXPL_UK));
+				String name = df.formatCellValue(row.getCell(COLUMN_INDEX_NAME_DE));
+				String desc = df.formatCellValue(row.getCell(COLUMN_INDEX_EXPL_DE));
 				String image = df.formatCellValue(row.getCell(COLUMN_INDEX_IMAGE));
+				
+				if (id.equals("10802")) {
+					System.out.println(row.getCell(COLUMN_INDEX_IMAGE));
+				}
 				
 				StylightNode node = new StylightNode();
 				node.setName(name);
+				//System.out.println("" + id + " " + row.getRowNum());
 				node.setLevel(Short.parseShort(level));
 				node.setDescription(desc.length() > 1 ? desc : "");
 				node.setId(Integer.parseInt(id));
 				node.setImage(image);
-				
+
 				switch(node.getLevel()){
 				case 1:
 					nodes_1.add(node);
@@ -271,11 +277,21 @@ public class StylightTreeToJSON {
 					break;
 				}
 			}
-			
+
+		}
+
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		//System.out.println(gson.toJson(nodes_1));
+		
+		try {
+			PrintWriter out = new PrintWriter("/Users/nlattek/Desktop/stylight_categories.json");
+			out.println(gson.toJson(nodes_1));
+			out.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		System.out.println(gson.toJson(nodes_1));
 	}
 
 }
